@@ -33,7 +33,6 @@
 	/* Check if the two countries are same */
 	check($connection);
 	
-	mysqli_close($connection);
 	?>	
 	
 </div>

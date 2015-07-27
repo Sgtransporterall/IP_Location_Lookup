@@ -19,13 +19,12 @@
 		date_default_timezone_set("Europe/Stockholm");
 		
 		/* Fetch the created time of the GeoIP table IP */
-		$query = "SHOW TABLE STATUS FROM ".$dbname." WHERE NAME='IP'  ";	
+		$query = "show table status from ".$dbname." where name='IP'  ";	
 		$result = mysqlQuery_Result($connection, $query);
 		
 		/* Check if the GeoIP table IP exists*/
 		$if_exist = mysqli_num_rows($result);
 		if( $if_exist == 0){
-			
 			/* If the GeoIP table does not exist, we are going to update the database*/
 			updateDatabase($if_exist,$connection);
 		
@@ -87,7 +86,7 @@
 				
 				/* Check if the Geoip table IP exists. Create the table if it does not exist */
 				if($if_exist > 0){
-				$query = "DROP TABLE IP";
+				$query = "DROP table ip ";
 				mysqlQuery($connection, $query);
 				}			
 				$query = "CREATE TABLE IP( ";
@@ -102,7 +101,7 @@
 	
 				/* Load the downloaded file to the table */
 				$query = "LOAD DATA LOCAL INFILE './GeoIPCountryWhois.csv ' ";
-				$query.= "INTO TABLE IP  ";
+				$query.= "INTO TABLE ip  ";
 				$query.= "FIELDS TERMINATED BY ',' ";
 				$query.= "ENCLOSED BY '\"' ";
 				$query.= "LINES TERMINATED BY '\n';";
@@ -117,11 +116,11 @@
 		
 		/* Firstly, spliting the target IP address to four parts. Example: 85.45.1.122 -> part1='85', part2='45', part3='1' and part4='122' */
 		$query = "SELECT SUBSTRING_INDEX(IP,'.',1), ";
-		$query.= "SUBSTRING_INDEX(SUBSTRING_INDEX(IP,'.',2),'.',-1), ";
-		$query.= "SUBSTRING_INDEX(SUBSTRING_INDEX(IP,'.',-2),'.',1), ";
-		$query.= "SUBSTRING_INDEX(IP,'.',-1), ";
+		$query.= "SUBSTRING_INDEX(SUBSTRING_INDEX(ip,'.',2),'.',-1), ";
+		$query.= "SUBSTRING_INDEX(SUBSTRING_INDEX(ip,'.',-2),'.',1), ";
+		$query.= "SUBSTRING_INDEX(ip,'.',-1), ";
 		$query.= "Country_Name, Purchase_ID "; 
-		$query.= "FROM Purchase_List";
+		$query.= "FROM purchase_list";
 		$result = mysqlQuery_Result($connection, $query);
 			
 		while($row = mysqli_fetch_row($result)){
@@ -137,7 +136,7 @@
 			$Decimal_ip = $part1*256*256*256 + $part2*256*256 + $part3*256 + $part4;
 			
 			/* Find the actual country which the target IP belongs to.*/
-			$query = "SELECT Country_Name FROM IP ";
+			$query = "SELECT Country_Name from ip ";
 			$query.= "WHERE Decimal_IP_Start <=".$Decimal_ip." ";
 			$query.= "ORDER BY Decimal_IP_Start DESC ";
 			$query.= "LIMIT 1 ";
@@ -159,18 +158,14 @@
 				}
 			}		
 		}
-		mysqli_free_result($result);
-		
 		echo "<br>Total items:".$count_items."<br><br>";
-		
-		
 	}
 	
 	/* the function generate purchase list by randomly selecting items from table IP*/
 	function generate_list($count, $percentage, $connection){
 		
-		/* Select items from table IP randomly and insert into the Purchase_List */
-		$query = "INSERT INTO Purchase_List(IP, Country_Name) ";
+		/* Select items from table IP randomly and insert into the purchase_list */
+		$query = "INSERT INTO purchase_list(IP, Country_Name) ";
 		$query.= "SELECT IP_Start, Country_Name ";
 		$query.= "FROM IP ORDER BY RAND() LIMIT ".$count." ";
 		mysqlQuery($connection, $query);
@@ -179,7 +174,7 @@
 		$count_update = floor($count * (1 - $percentage));
 
 		/* Set some of the purchases county names to be wrong, here I set the country name = "United States". Then the items have been changed will be the not-matched items */
-		$query = "UPDATE Purchase_List ";
+		$query = "UPDATE purchase_list ";
 		$query.= "SET Country_Name='United States' ";
 		$query.= " LIMIT ".$count_update." ";
 		mysqlQuery($connection, $query);
