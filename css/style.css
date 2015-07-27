@@ -5,12 +5,12 @@ body{
 
 #generate{
 	float: left;
-	padding: 15px 55px 20px 55px;
+	padding: 15px 70px 20px ;
 }
 
 #create{
 	float:left;
-	padding: 15px 55px 25px 55px;
+	padding: 15px 70px 25px ;
 }
 
 #form_clear{

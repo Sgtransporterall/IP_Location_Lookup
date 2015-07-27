@@ -2,14 +2,14 @@
 	include('functions.php');
 	include('connect.php'); //Include database connection
 	
-	/* Create the table purchase_list if it does not exist.*/
-	$query = " SHOW TABLES LIKE 'purchase_list' ";
+	/* Create the table Purchase_List if it does not exist.*/
+	$query = " SHOW TABLES LIKE 'Purchase_List' ";
 	$result = mysqlQuery_Result($connection, $query);
 		if( mysqli_num_rows($result) == 0){	
-			$query = "CREATE TABLE purchase_list ( ";
+			$query = "CREATE TABLE Purchase_List ( ";
 			$query.= "	Purchase_ID INT UNSIGNED AUTO_INCREMENT, ";
-			$query.= "	IP varchar(15) , ";
-			$query.= "	Country_Name varchar(20), ";
+			$query.= "	IP VARCHAR(15) , ";
+			$query.= "	Country_Name VARCHAR(20), ";
 			$query.= "	PRIMARY KEY(Purchase_ID)) ";
 			mysqlQuery($connection, $query);
 		}
@@ -84,7 +84,7 @@
 <div id="database">
  <h4>Current purchase list:</h4>
 	<?php 
-		/* update table purchase_list according to the user input */
+		/* update table Purchase_List according to the user input */
 		
 		/* Generate a purchase list randomly */
 	    if(isset($_POST['count'])&& isset($_POST['percentage'])){
@@ -98,20 +98,20 @@
 			$ip = $_POST['ip']; //Your IP address
 			$delivery_country = $_POST['delivery_country']; //Your delivery country 
 			
-			/* Insert the pruchase to the table purchase_list */
-			$query = "Insert into purchase_list(ip, Country_Name) ";
+			/* Insert the pruchase to the table Purchase_List */
+			$query = "INSERT INTO Purchase_List(IP, Country_Name) ";
 			$query.= "VALUES ('".$ip."', '".$delivery_country."') " ;
 			mysqlQuery($connection, $query);		
 
-		/* If the user want to empty the table purchase_list */
+		/* If the user want to empty the table Purchase_List */
 		}else if(isset($_POST['clear'])){
 
-			$query = "TRUNCATE TABLE purchase_list";
+			$query = "TRUNCATE TABLE Purchase_List";
 			mysqlQuery($connection, $query);
 		}
 		
-		/* Display the current purchase_list on the page  */	   
-		$query = "SELECT * FROM purchase_list ";
+		/* Display the current Purchase_List on the page  */	   
+		$query = "SELECT * FROM Purchase_List ";
 		$query.= "ORDER BY Purchase_ID DESC ";
 		$result = mysqlQuery_Result($connection, $query);
 		$count = mysqli_num_rows($result);
@@ -126,7 +126,8 @@
 				  $count--;
 			}
 		 }
-	   
+		mysqli_free_result($result);
+	    mysqli_close($connection);
 	?>
 	
 </div><br>
