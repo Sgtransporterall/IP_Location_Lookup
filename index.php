@@ -15,7 +15,7 @@
 		}
 	
 	/* auto update GeoIP database, if it is not latest one. */
-	//check_update($dbname, $connection);
+	check_update($dbname, $connection);
 ?>
 
 <html lang="en">
